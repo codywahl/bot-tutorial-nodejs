@@ -1,16 +1,20 @@
 var HTTPS = require('https');
-var nextRaid = "Friday 8:30PM EST";
+var nextRaid = "No message set. Use /setraidmsg: to set one.";
 
 var botID = process.env.BOT_ID;
 
 function respond() {
-  var request = JSON.parse(this.req.chunks[0]),
-      botRegex = /^\/next raid when$/;
+  var request = JSON.parse(this.req.chunks[0]);
+  var nextRaidRegex = /^\/when is raid$/;
+  var nextRaidRegex2 = /^\/raid\?$/;
+  var input = request.text;
 
-  if(request.text && botRegex.test(request.text)) {
+  if(request.text && (nextRaidRegex.test(input) || nextRaidRegex2.test(input))) {
     this.res.writeHead(200);
     postMessage();
     this.res.end();
+  } else if (request.text && input.indexOf("/setraidmsg:") > -1){
+	nextRaid = input.replace("/setraidmsg:", "");
   } else {
     console.log("don't care");
     this.res.writeHead(200);
